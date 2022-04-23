@@ -1,0 +1,25 @@
+server:
+  port: 8761
+spring:
+  profiles:
+    active: local
+  cloud:
+    loadBalancer:
+      ribbon:
+        enabled: false
+eureka:
+  server:
+    enableSelfPreservation: false
+  instance:
+    hostname: localhost
+    preferIpAddress: true
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: 'http://localhost:8761/eureka'
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
