@@ -24,7 +24,7 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) {
-		String[] patterns = new String[] { "/auth/**", "/static/**", "/webjars/**", "/favicon.ico" };
+		String[] patterns = new String[] { "/auth/**", "/static/**", "/webjars/**", "/favicon.ico", "/smart-files/**" };
 		return http.cors().disable().exceptionHandling().authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> {
 			swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
 		})).accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> {

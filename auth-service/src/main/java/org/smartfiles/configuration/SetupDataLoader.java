@@ -13,13 +13,11 @@ import org.smartfiles.repo.PrivilegeRepo;
 import org.smartfiles.repo.RolesRepo;
 import org.smartfiles.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
+public class SetupDataLoader  {
 
 	boolean alreadySetup = false;
 
@@ -35,40 +33,36 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	@Override
+	
 	@Transactional
-	public void onApplicationEvent(ContextRefreshedEvent event) {
+	public void insertTestData() {
 		System.out.println("onApplicationEvent triggered");
-		if (alreadySetup)
-			return;
 		Privilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
 		Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
-		Privilege guestPrivilege = createPrivilegeIfNotFound("GUEST_PRIVILEGE");
 
 		List<Privilege> adminPrivileges = Arrays.asList(readPrivilege, writePrivilege);
 		createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
 		createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
-		createRoleIfNotFound("ROLE_GUEST", Arrays.asList(guestPrivilege));
 
-		if (userRepository.findByEmail("sai.charan@winvest-global.com") != null) {
+		if (userRepository.findByEmail("smartfiles-admin@gmail.com") == null) {
 			Role adminRole = roleRepository.findByName("ROLE_ADMIN");
 			User user = new User();
 			user.setFirstName("Sai Charan");
 			user.setLastName("Krishnagiri");
 			user.setPassword(passwordEncoder.encode("Passw0rd1"));
-			user.setEmail("sai.charan@winvest-global.com");
+			user.setEmail("smartfiles-admin@gmail.com");
 			user.setRoles(Arrays.asList(adminRole));
 			user.setEnabled(true);
 			userRepository.save(user);
 		}
-		if (userRepository.findByEmail("test@winvest-global.com") != null) {
-			Role guestRole = roleRepository.findByName("ROLE_GUEST");
+		if (userRepository.findByEmail("smartfiles-user@gmail.com") == null) {
+			Role userRole = roleRepository.findByName("ROLE_USER");
 			User user = new User();
 			user.setFirstName("Test");
 			user.setLastName("Winvest");
 			user.setPassword(passwordEncoder.encode("Passw0rd1"));
-			user.setEmail("test@winvest-global.com");
-			user.setRoles(Arrays.asList(guestRole));
+			user.setEmail("smartfiles-user@gmail.com");
+			user.setRoles(Arrays.asList(userRole));
 			user.setEnabled(true);
 			userRepository.save(user);
 		}

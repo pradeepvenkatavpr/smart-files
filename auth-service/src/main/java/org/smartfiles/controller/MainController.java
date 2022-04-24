@@ -1,5 +1,6 @@
 package org.smartfiles.controller;
 
+import org.smartfiles.configuration.SetupDataLoader;
 import org.smartfiles.dto.ApiResponse;
 import org.smartfiles.dto.LoginRequest;
 import org.smartfiles.dto.LoginResponse;
@@ -23,9 +24,13 @@ public class MainController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private SetupDataLoader dataLoaderService;
 
 	@PostMapping("/login")
 	@ResponseBody
+
 	public Mono<ApiResponse> authorizeLogin(ServerWebExchange exchange) {
 		Mono<MultiValueMap<String, String>> formData = exchange.getFormData();
 		System.out.println(formData);
@@ -73,5 +78,12 @@ public class MainController {
 			}
 			return Mono.just(new ApiResponse(401, "Registration Failed", null));
 		});
+	}
+	
+	@PostMapping("/insert-dummy-data")
+	@ResponseBody
+	public Mono<ApiResponse> insertDummyData(ServerWebExchange exchange) {
+		this.dataLoaderService.insertTestData();
+		return Mono.just(new ApiResponse(200, "Registered Successfully, Please check your mail", null));
 	}
 }
